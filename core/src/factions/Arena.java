@@ -11,22 +11,16 @@ public class Arena {
     }
 
     public List<Character> adicionarPersonagem() {
-        // Método para adicionar uma personagem à arena
-        personagens.add(new Character());
+        
+        personagens.add(new Character()); // Método para adicionar uma personagem à arena
         return personagens;
         }
 
     public void removerEntidade() {
-        // Método para remover uma entidade da arena
-        for (Combatente personagem : getCombatentes()) {
-            if (personagem.estaVivo() == false) {
-                combatentes.remove(personagem);
-                // Condição para remover o personagem da arena...
-            } else {
-                return void;
+        for (Character personagem : personagens) {
+            personagens.removeIf(personagem -> personagem.getPV() == 0); // Método para remover uma entidade da arena
             }
         }
-    }
 
     public int[] getTimes() {
         // Método para obter os times na arena
@@ -37,15 +31,15 @@ public class Arena {
     public void iniciarCombate() {
         // Método para iniciar o combate entre as entidades na arena
 
-    }e
+    }
 
     public boolean condicaoVitoria() {
-        // Método para verificar a condição de vitória
+        
         if(times[x] == 0) {
             System.out.println("Vitória do time " + times[x] + "!");
             return true;
         } else if(times[y] == 0) {
-            System.out.println("Vitória do time " + times[y] + "!");
+            System.out.println("Vitória do time " + times[y] + "!"); // Método para verificar a condição de vitória
             return true;
         } else {
             return false;
