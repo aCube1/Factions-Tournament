@@ -3,18 +3,17 @@ import java.util.*;
 public class Arena {
 
     private int[] times;
-    private List<Combatente> combatentes;
+    private List<Character> personagens;
 
     public Arena(int[] times) {
         this.times = new int[times.length];
-        this.combatentes = new ArrayList<>();
+        this.personagens = new ArrayList<>();
     }
 
-    public List<Combatente> adicionarEntidade() {
-        // Método para adicionar uma entidade à arena
-        // Vai chamar um método do combatente para registrar a entidade
-        combatentes.add(new Combatente());
-        return combatentes;
+    public List<Character> adicionarPersonagem() {
+        // Método para adicionar uma personagem à arena
+        personagens.add(new Character());
+        return personagens;
         }
 
     public void removerEntidade() {
