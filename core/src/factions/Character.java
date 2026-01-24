@@ -1,20 +1,20 @@
 package factions;
 
 public abstract class Character {
-    private String name = "NAME ME!";
-    private int base_pv; // Points de Vie -> 0 = Dead
-    private int base_atk; // Attack points
-    private float base_speed; // Speed: 1.0 -> Normal; 0.5 -> Half; 2.0 -> Double
-    private float current_xp = 0.0f;
-    private int current_level = 0;
+    private String _name = "NAME ME!";
+    private int _base_pv; // Points de Vie -> 0 = Dead
+    private int _base_atk; // Attack points
+    private float _base_speed; // Speed: 1.0 -> Normal; 0.5 -> Half; 2.0 -> Double
+    private float _current_xp = 0.0f;
+    private int _current_level = 0;
 
     public Character(String name, int pv, int atk, float speed) {
         if (!name.isEmpty() || !name.isBlank())
-            this.name = name;
+            _name = name;
 
-        this.base_pv = pv;
-        this.base_atk = atk;
-        this.base_speed = speed;
+        _base_pv = pv;
+        _base_atk = atk;
+        _base_speed = speed;
     }
 
     public Character(String name, int base_pv, int base_atk) {
@@ -22,53 +22,53 @@ public abstract class Character {
     }
 
     public String getName() {
-        return name;
+        return _name;
     }
 
     public int getPV() {
-        return base_pv;
+        return _base_pv;
     }
 
     public int getAttack() {
-        return base_atk;
+        return _base_atk;
     }
 
     public float getSpeed() {
-        return base_speed;
+        return _base_speed;
     }
 
     public float getXP() {
-        return current_xp;
+        return _current_xp;
     }
 
     public int getLevel() {
-        return current_level;
+        return _current_level;
     }
 
     public void setName(String name) {
         if (name.isEmpty() || name.isBlank())
             return;
 
-        this.name = name;
+        _name = name;
     }
 
     public void setPV(int pv) {
-        this.base_pv = pv;
+        _base_pv = pv;
     }
 
     public void setAttack(int attack) {
-        this.base_atk = attack;
+        _base_atk = attack;
     }
 
     public void setSpeed(int speed) {
-        this.base_speed = speed;
+        _base_speed = speed;
     }
 
     public void setXP(float xp) {
-        this.current_xp = xp;
+        _current_xp = xp;
     }
 
     public void setLevel(int level) {
-        this.current_level = level;
+        _current_level = level;
     }
 }
