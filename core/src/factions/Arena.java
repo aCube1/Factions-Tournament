@@ -18,24 +18,16 @@ public class Arena {
         _redTeam = new ArrayList<Character>();
     }
 
-    private void doTurn() {
-        // Compute current turn
+    public void computeTurn(IController controller) {
+        if (_winner != TEAM_NONE)
+            return; // Some team already won, there's nothing to do here
 
         // Remove dead characters
         _blueTeam.removeIf(character -> character.getPV() == 0);
         _redTeam.removeIf(character -> character.getPV() == 0);
-    }
 
-    public void loop() {
-        if (_winner != TEAM_NONE)
-            return; // Some team already won, there's nothing to do here
-
-        // Called every frame
-        doTurn();
-
-        // Check which team has win
+        // Can both teams lose at the same time?
         _winner = TEAM_NONE;
-        // Both teams can lose at the same time?
         if (_blueTeam.isEmpty()) {
             _winner |= TEAM_RED;
         }
