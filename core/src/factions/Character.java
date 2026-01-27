@@ -71,4 +71,11 @@ public abstract class Character {
     public void setLevel(int level) {
         _current_level = level;
     }
+
+    public void takeDamage(int damage){
+        this._base_pv -= damage;
+        if(this._base_pv < 0){
+            this._base_pv = 0;
+        }
+    }
 }

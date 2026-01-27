@@ -18,9 +18,20 @@ public class Arena {
         _redTeam = new ArrayList<Character>();
     }
 
-    public void computeTurn(IController controller) {
+    public void computeTurn(List<IController> controllers) {
+        
         if (_winner != TEAM_NONE)
             return; // Some team already won, there's nothing to do here
+
+        List<Action> actions = new ArrayList<>();
+
+        for(IController controller : controllers){ //colete as ações dos jogadores
+            actions.addAll(controller.collectActions(this));
+        }
+
+        for(Action action : actions) { //execute as ações coletadas
+            action.execute(this);
+        }
 
         // Remove dead characters
         _blueTeam.removeIf(character -> character.getPV() == 0);
@@ -28,6 +39,7 @@ public class Arena {
 
         // Can both teams lose at the same time?
         _winner = TEAM_NONE;
+
         if (_blueTeam.isEmpty()) {
             _winner |= TEAM_RED;
         }

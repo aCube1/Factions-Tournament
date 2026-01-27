@@ -1,7 +1,10 @@
 package factions;
 
+import java.util.List;
+import factions.Action;
+
 public interface IController {
 
-    void processTurn(Arena arena); //Processes a game turn based on the current state of the Arena.
+    List<Action> collectActions(Arena arena);
 
 }
