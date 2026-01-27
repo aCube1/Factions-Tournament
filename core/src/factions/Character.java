@@ -9,7 +9,7 @@ public abstract class Character {
     private int _current_level = 0;
 
     public Character(String name, int pv, int atk, float speed) {
-        if (!name.isEmpty() || !name.isBlank())
+        if (!name.isBlank())
             _name = name;
 
         _base_pv = pv;
@@ -46,7 +46,7 @@ public abstract class Character {
     }
 
     public void setName(String name) {
-        if (name.isEmpty() || name.isBlank())
+        if (name.isBlank())
             return;
 
         _name = name;
@@ -72,9 +72,9 @@ public abstract class Character {
         _current_level = level;
     }
 
-    public void takeDamage(int damage){
+    public void takeDamage(int damage) {
         this._base_pv -= damage;
-        if(this._base_pv < 0){
+        if (this._base_pv < 0) {
             this._base_pv = 0;
         }
     }

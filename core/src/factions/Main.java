@@ -30,8 +30,12 @@ public class Main extends ApplicationAdapter {
 
         // TODO: Check both player's and AI's commands
         // and compute current turn
-        // _arena.computeTurn(_player);
-        // _arena.computeTurn(_main_ai);
+
+        _player.update(_input);
+        _main_ai.update(_input);
+
+        _arena.computeTurn(_player);
+        _arena.computeTurn(_main_ai);
 
         ScreenUtils.clear(Color.DARK_GRAY);
         _batch.begin();

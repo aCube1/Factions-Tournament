@@ -1,10 +1,9 @@
 package factions;
 
-import java.util.List;
-import factions.Action;
+import com.badlogic.gdx.utils.Array;
 
 public interface IController {
+    public void update(InputManager input);
 
-    List<Action> collectActions(Arena arena);
-
+    public Array<Action> collectActions();
 }
