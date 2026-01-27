@@ -1,3 +1,5 @@
+# Prompts utilizados no projeto:
+
 1. Análise do CRC e integração com o código- Desenvolvimento do código com base no cartão CRC.- Integração do CRC com código existente.
 2. Integração de código existente- Análise da classe Arena existente.- Explicação de trechos específicos do código.
 3. Interface de controle (IController)- Criação do IController seguindo a estrutura do projeto.- Discussão sobre métodos necessários e documentação.
@@ -10,5 +12,5 @@
 10. Justificativa técnica- Explicação detalhada do propósito das mudanças no código.
 11. Versionamento- Listagem do que foi implementado para commit organizado.
 
-Observação Final
-Este documento resume os prompts técnicos que guiaram a evolução arquitetural do projeto, com foco em um modelo baseado em Actions e alinhado ao CRC.
+> Observação Final
+> Este documento resume os prompts técnicos que guiaram a evolução arquitetural do projeto, com foco em um modelo baseado em Actions e alinhado ao CRC.
