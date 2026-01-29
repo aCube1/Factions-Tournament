@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import com.badlogic.gdx.utils.Array;
-
 public class Arena {
     public static final int TEAM_NONE = 0;
     public static final int TEAM_BLUE = 1 << 0;
@@ -25,7 +23,7 @@ public class Arena {
         if (_winner != TEAM_NONE)
             return; // Some team already won, there's nothing to do here
 
-        Array<Action> actions = controller.collectActions();
+        ArrayList<Action> actions = controller.collectActions();
         for (Action action : actions) { // Execute actions
             action.execute(this);
         }

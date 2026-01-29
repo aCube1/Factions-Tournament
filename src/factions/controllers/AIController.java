@@ -1,25 +1,24 @@
 package factions.controllers;
 
-import com.badlogic.gdx.utils.Array;
+import java.util.ArrayList;
 
 import factions.Action;
 import factions.IController;
-import factions.InputManager;
 
 public class AIController implements IController {
-    Array<Action> _actions;
+    ArrayList<Action> _actions;
 
     public AIController() {
 
     }
 
     @Override
-    public void update(InputManager input) {
+    public void update() {
     }
 
     @Override
-    public Array<Action> collectActions() {
-        var actions = new Array<Action>(_actions);
+    public ArrayList<Action> collectActions() {
+        var actions = new ArrayList<Action>(_actions);
         _actions.clear();
 
         return actions;

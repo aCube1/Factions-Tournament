@@ -1,0 +1,123 @@
+package factions;
+
+import factions.controllers.*;
+
+import java.io.IOException;
+
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.graphics.TextGraphics;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.screen.TerminalScreen;
+import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
+import com.googlecode.lanterna.terminal.Terminal;
+
+public class Game {
+    static final int TARGET_FPS = 60;
+    static final long TARGET_FRAMETIME = 1_000_000_000L / TARGET_FPS; // NS per frame
+
+    private Arena _arena;
+    private PlayerController _player;
+    private AIController _main_ai;
+
+    // FPS syncronization and update
+    private long _last_frame_time;
+    private long _fps_timer;
+    private long _frame_count;
+    private int _current_fps;
+
+    public static void main(String[] args) throws IOException, InterruptedException {
+        Terminal terminal = null;
+        Screen screen = null;
+
+        try {
+            terminal = new DefaultTerminalFactory().createTerminal();
+            screen = new TerminalScreen(terminal);
+
+            screen.startScreen();
+            screen.setCursorPosition(null);
+
+            Game game = new Game();
+
+            while (true) {
+                game.doFrame(screen);
+                game.syncFPS();
+
+                KeyStroke key = screen.pollInput();
+                if (key != null && (key.getKeyType() == KeyType.Escape || key.getKeyType() == KeyType.EOF)) {
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (screen != null)
+                screen.close();
+            if (terminal != null)
+                terminal.close();
+        }
+    }
+
+    public Game() {
+        _last_frame_time = System.nanoTime();
+        _fps_timer = _last_frame_time;
+        _frame_count = 0;
+        _current_fps = 0;
+
+        _arena = new Arena();
+    }
+
+    private void doFrame(Screen screen) throws IOException {
+        // TODO: Check both player's and AI's commands
+        // and compute current turn
+
+        // _player.update(_input);
+        // _main_ai.update(_input);
+
+        // _arena.computeTurn(_player);
+        // _arena.computeTurn(_main_ai);
+
+        TextGraphics gfx = screen.newTextGraphics();
+        screen.clear();
+
+        TerminalPosition fps_display = new TerminalPosition(0, 0);
+        gfx.putString(fps_display, String.format("FPS: %d", _current_fps));
+
+        screen.refresh();
+        screen.doResizeIfNecessary();
+
+    }
+
+    private void syncFPS() {
+        long current_time = System.nanoTime();
+        long elapsed_time = current_time - _last_frame_time;
+        long sleep_time = TARGET_FRAMETIME - elapsed_time;
+
+        if (sleep_time > 0) {
+            try {
+                long millis = sleep_time / 1_000_000; // NS -> MS
+                int nanos = ((int) sleep_time) % 1_000_000; // Just to make sure it's NS
+                Thread.sleep(millis, nanos);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        _last_frame_time = System.nanoTime();
+
+        // Update FPS counter
+        _frame_count++;
+        current_time = System.nanoTime();
+        elapsed_time = current_time - _fps_timer;
+
+        // Only update after 1 second
+        if (elapsed_time >= 1_000_000_000L) {
+            _current_fps = (int) _frame_count;
+            _frame_count = 0;
+            _fps_timer = current_time;
+        }
+    }
+
+}
