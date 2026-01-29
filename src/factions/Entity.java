@@ -1,6 +1,6 @@
 package factions;
 
-public abstract class Character {
+public abstract class Entity {
     private String _name = "NAME ME!";
     private int _base_pv; // Points de Vie -> 0 = Dead
     private int _base_atk; // Attack points
@@ -8,7 +8,7 @@ public abstract class Character {
     private float _current_xp = 0.0f;
     private int _current_level = 0;
 
-    public Character(String name, int pv, int atk, float speed) {
+    Entity(String name, int pv, int atk, float speed) {
         if (!name.isBlank())
             _name = name;
 
@@ -17,7 +17,7 @@ public abstract class Character {
         _base_speed = speed;
     }
 
-    public Character(String name, int base_pv, int base_atk) {
+    Entity(String name, int base_pv, int base_atk) {
         this(name, base_pv, base_atk, 1.0f);
     }
 

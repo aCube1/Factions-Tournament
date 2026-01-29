@@ -10,11 +10,11 @@ public class Arena {
     public static final int TEAM_RED = 1 << 1;
     public static final int TEAM_ALL = TEAM_BLUE | TEAM_RED;
 
-    private ArrayList<Character> _blue_team;
-    private ArrayList<Character> _red_team;
+    private ArrayList<Entity> _blue_team;
+    private ArrayList<Entity> _red_team;
     private int _winner = TEAM_NONE;
 
-    public Arena() {
+    Arena() {
         _blue_team = new ArrayList<>();
         _red_team = new ArrayList<>();
     }
@@ -43,12 +43,12 @@ public class Arena {
         }
     }
 
-    public void addCharacter(int team_color, Character character) {
+    public void addCharacter(int team_color, Entity character) {
         var team = getTeam(team_color);
         team.ifPresent(self -> self.add(character));
     }
 
-    public Optional<List<Character>> getTeam(int team_color) {
+    public Optional<List<Entity>> getTeam(int team_color) {
         switch (team_color) {
             case TEAM_BLUE:
                 return Optional.of(_blue_team);

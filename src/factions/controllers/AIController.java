@@ -8,7 +8,7 @@ import factions.IController;
 public class AIController implements IController {
     ArrayList<Action> _actions;
 
-    public AIController() {
+    AIController() {
 
     }
 
