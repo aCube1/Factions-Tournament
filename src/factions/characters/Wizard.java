@@ -1,8 +1,8 @@
 package factions.characters;
 
-import factions.Character;
+import factions.Entity;
 
-public class Wizard extends Character {
+public class Wizard extends Entity {
     public static final int BASE_PV = 100;
     public static final int BASE_ATK = 20;
     public static final float BASE_SPEED = 1.0f;

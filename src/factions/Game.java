@@ -2,22 +2,44 @@ package factions;
 
 import factions.controllers.*;
 
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JFrame;
+
 import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
+import com.googlecode.lanterna.screen.VirtualScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
+import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
+import com.googlecode.lanterna.terminal.swing.SwingTerminal;
+import com.googlecode.lanterna.terminal.swing.SwingTerminalFontConfiguration;
+import com.googlecode.lanterna.terminal.swing.TerminalEmulatorAutoCloseTrigger;
+import com.googlecode.lanterna.terminal.swing.TerminalEmulatorColorConfiguration;
+import com.googlecode.lanterna.terminal.swing.TerminalEmulatorDeviceConfiguration;
 
-public class Game {
-    static final int TARGET_FPS = 60;
+public class Game implements WindowListener {
+    static final int DEFAULT_WIDTH = 800;
+    static final int DEFAULT_HEIGHT = 600;
+    static final int TARGET_FPS = 30;
     static final long TARGET_FRAMETIME = 1_000_000_000L / TARGET_FPS; // NS per frame
+
+    private boolean _window_should_close;
+    private InputManager _input;
 
     private Arena _arena;
     private PlayerController _player;
@@ -30,50 +52,73 @@ public class Game {
     private long _frame_count;
     private int _current_fps;
 
+    TextColor _color;
+
     public static void main(String[] args) throws IOException, InterruptedException {
-        Terminal terminal = null;
         Screen screen = null;
 
-        try {
-            terminal = new DefaultTerminalFactory().createTerminal();
-            screen = new TerminalScreen(terminal);
+        Font font = new Font("Monospaced", Font.PLAIN, 12);
+        SwingTerminal terminal = new SwingTerminal();
 
+        JFrame frame = new JFrame("Factions Tournament");
+        frame.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setResizable(false);
+        frame.setFont(font);
+        frame.add(terminal);
+
+        frame.pack();
+        frame.setLocationRelativeTo(null); // Center terminal on screen
+        frame.setVisible(true);
+        frame.setFocusable(true);
+        frame.requestFocusInWindow();
+
+        try {
+            screen = new TerminalScreen(terminal);
             screen.startScreen();
             screen.setCursorPosition(null);
 
-            Game game = new Game();
+            Game game = new Game(terminal);
+            frame.addWindowListener(game);
 
-            while (true) {
+            while (!game._window_should_close) {
                 game.doFrame(screen);
                 game.syncFPS();
-
-                KeyStroke key = screen.pollInput();
-                if (key != null && (key.getKeyType() == KeyType.Escape || key.getKeyType() == KeyType.EOF)) {
-                    break;
-                }
             }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             if (screen != null)
-                screen.close();
-            if (terminal != null)
-                terminal.close();
+                screen.stopScreen();
+
+            terminal.close();
+            frame.dispose();
         }
     }
 
-    public Game() {
+    private Game(SwingTerminal terminal) {
+        _window_should_close = false;
+        _input = new InputManager(terminal);
+
+        _arena = new Arena();
+        _player = new PlayerController();
+        _main_ai = new AIController();
+
         _last_frame_time = System.nanoTime();
         _fps_timer = _last_frame_time;
         _frame_count = 0;
         _current_fps = 0;
 
+<<<<<<< HEAD
         _arena = new Arena();
         _player = new PlayerController(); //instaciando o player e ia
         _main_ai = new AIController();
         _controllers = new ArrayList<>();
         _controllers.add(_main_ai);
         _controllers.add(_player);
+=======
+        _color = TextColor.ANSI.BLUE;
+>>>>>>> 2235da91646b3ad2447207598c0cf043df7d4f91
     }
 
     private void doFrame(Screen screen) throws IOException {
@@ -85,15 +130,25 @@ public class Game {
 
         _arena.computeTurn(_controllers);
 
-        TextGraphics gfx = screen.newTextGraphics();
+        _input.pollInput();
         screen.clear();
 
-        TerminalPosition fps_display = new TerminalPosition(0, 0);
-        gfx.putString(fps_display, String.format("FPS: %d", _current_fps));
+        TextGraphics gfx = screen.newTextGraphics();
+
+        if (_input.isKeyJustPressed(KeyEvent.VK_TAB)) {
+            if (_color == TextColor.ANSI.BLUE)
+                _color = TextColor.ANSI.GREEN;
+            else
+                _color = TextColor.ANSI.BLUE;
+        }
+
+        String fps_text = String.format("FPS: %d", _current_fps);
+        gfx.setBackgroundColor(_color);
+        gfx.putString(0, 0, fps_text);
 
         screen.refresh();
-        screen.doResizeIfNecessary();
 
+        screen.doResizeIfNecessary();
     }
 
     private void syncFPS() {
@@ -153,5 +208,34 @@ public class Game {
         }
     }
 }
+
+    @Override
+    public void windowActivated(WindowEvent e) {
+    }
+
+    @Override
+    public void windowClosed(WindowEvent e) {
+    }
+
+    @Override
+    public void windowClosing(WindowEvent e) {
+        _window_should_close = true;
+    }
+
+    @Override
+    public void windowDeactivated(WindowEvent e) {
+    }
+
+    @Override
+    public void windowDeiconified(WindowEvent e) {
+    }
+
+    @Override
+    public void windowIconified(WindowEvent e) {
+    }
+
+    @Override
+    public void windowOpened(WindowEvent e) {
+    }
 
 }
