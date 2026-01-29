@@ -8,7 +8,7 @@ import factions.IController;
 public class PlayerController implements IController {
     ArrayList<Action> _actions;
 
-    PlayerController() {
+    public PlayerController() {
         _actions = new ArrayList<>();
     }
 

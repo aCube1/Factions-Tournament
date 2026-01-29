@@ -14,7 +14,7 @@ public class Arena {
     private ArrayList<Entity> _red_team;
     private int _winner = TEAM_NONE;
 
-    Arena() {
+    public Arena() {
         _blue_team = new ArrayList<>();
         _red_team = new ArrayList<>();
     }

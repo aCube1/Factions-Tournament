@@ -8,7 +8,7 @@ public abstract class Entity {
     private float _current_xp = 0.0f;
     private int _current_level = 0;
 
-    Entity(String name, int pv, int atk, float speed) {
+    public Entity(String name, int pv, int atk, float speed) {
         if (!name.isBlank())
             _name = name;
 
@@ -17,7 +17,7 @@ public abstract class Entity {
         _base_speed = speed;
     }
 
-    Entity(String name, int base_pv, int base_atk) {
+    public Entity(String name, int base_pv, int base_atk) {
         this(name, base_pv, base_atk, 1.0f);
     }
 
