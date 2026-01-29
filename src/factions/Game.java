@@ -109,16 +109,15 @@ public class Game implements WindowListener {
         _frame_count = 0;
         _current_fps = 0;
 
-<<<<<<< HEAD
+
         _arena = new Arena();
         _player = new PlayerController(); //instaciando o player e ia
         _main_ai = new AIController();
         _controllers = new ArrayList<>();
         _controllers.add(_main_ai);
         _controllers.add(_player);
-=======
+
         _color = TextColor.ANSI.BLUE;
->>>>>>> 2235da91646b3ad2447207598c0cf043df7d4f91
     }
 
     private void doFrame(Screen screen) throws IOException {

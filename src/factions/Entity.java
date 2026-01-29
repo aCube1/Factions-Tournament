@@ -1,14 +1,12 @@
 package factions;
 
-<<<<<<< HEAD:src/factions/Character.java
 import factions.characters.Guardian;
 import factions.characters.Wizard;
 import factions.characters.Hunter;
 
-public abstract class Character {
-=======
+
 public abstract class Entity {
->>>>>>> 2235da91646b3ad2447207598c0cf043df7d4f91:src/factions/Entity.java
+
     private String _name = "NAME ME!";
     private int _base_pv; // Points de Vie -> 0 = Dead
     private int _base_atk; // Attack points
