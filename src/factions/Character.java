@@ -1,7 +1,7 @@
 package factions;
 
 import factions.characters.Guardian;
-import factions.characters.Mage;
+import factions.characters.Wizard;
 import factions.characters.Hunter;
 
 public abstract class Character {
