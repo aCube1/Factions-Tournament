@@ -3,6 +3,8 @@ package factions;
 import factions.controllers.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.graphics.TextGraphics;
@@ -20,6 +22,7 @@ public class Game {
     private Arena _arena;
     private PlayerController _player;
     private AIController _main_ai;
+    private List<IController> _controllers;
 
     // FPS syncronization and update
     private long _last_frame_time;
@@ -66,17 +69,21 @@ public class Game {
         _current_fps = 0;
 
         _arena = new Arena();
+        _player = new PlayerController(); //instaciando o player e ia
+        _main_ai = new AIController();
+        _controllers = new ArrayList<>();
+        _controllers.add(_main_ai);
+        _controllers.add(_player);
     }
 
     private void doFrame(Screen screen) throws IOException {
         // TODO: Check both player's and AI's commands
         // and compute current turn
 
-        // _player.update(_input);
-        // _main_ai.update(_input);
+        _player.update();
+        _main_ai.update();
 
-        // _arena.computeTurn(_player);
-        // _arena.computeTurn(_main_ai);
+        _arena.computeTurn(_controllers);
 
         TextGraphics gfx = screen.newTextGraphics();
         screen.clear();
@@ -119,5 +126,32 @@ public class Game {
             _fps_timer = current_time;
         }
     }
+    private CharacterType askCharacterType(Screen screen) throws IOException {
+    TextGraphics gfx = screen.newTextGraphics();
+
+    while (true) {
+        screen.clear();
+
+        gfx.putString(0, 2, "Escolha seu personagem:");
+        gfx.putString(0, 4, "1 - Guardião");
+        gfx.putString(0, 5, "2 - Mago");
+        gfx.putString(0, 6, "3 - Caçador");
+        gfx.putString(0, 8, "Digite sua escolha:");
+
+        screen.refresh();
+
+        KeyStroke key = screen.readInput();
+
+        if (key.getKeyType() == KeyType.Character) {
+            CharacterType type = CharacterType.fromString(
+                String.valueOf(key.getCharacter())
+            );
+
+            if (type != null) {
+                return type;
+            }
+        }
+    }
+}
 
 }

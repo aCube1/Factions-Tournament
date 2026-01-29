@@ -19,20 +19,22 @@ public class Arena {
         _red_team = new ArrayList<>();
     }
 
-    public void computeTurn(IController controller) {
+    public void computeTurn(List<IController> controllers) {
         if (_winner != TEAM_NONE)
             return; // Some team already won, there's nothing to do here
 
-        ArrayList<Action> actions = controller.collectActions();
-        for (Action action : actions) { // Execute actions
+        List<Action> actions = new ArrayList<>();
+        for (IController controller : controllers) {
+            actions.addAll(controller.collectActions(this));
+        }
+        for (Action action : actions) {
             action.execute(this);
         }
-
-        // Remove dead characters
-        _blue_team.removeIf(character -> character.getPV() == 0);
-        _red_team.removeIf(character -> character.getPV() == 0);
-
-        // Can both teams lose at the same time?
+        removeDead();
+        checkWinner();
+    }
+    //refatoring code
+    private void checkWinner(){
         _winner = TEAM_NONE;
 
         if (_blue_team.isEmpty()) {
@@ -42,11 +44,17 @@ public class Arena {
             _winner |= TEAM_BLUE;
         }
     }
+    //refatoring code
+    private void removeDead(){
+        _blue_team.removeIf(character -> character.getPV() == 0);
+        _red_team.removeIf(character -> character.getPV() == 0);
+    }
 
     public void addCharacter(int team_color, Character character) {
         var team = getTeam(team_color);
         team.ifPresent(self -> self.add(character));
     }
+    
 
     public Optional<List<Character>> getTeam(int team_color) {
         switch (team_color) {
