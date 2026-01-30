@@ -15,6 +15,7 @@ public class PlayerController implements IController {
 
     @Override
     public void update() {
+        
     }
 
     @Override

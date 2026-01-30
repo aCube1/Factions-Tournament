@@ -36,7 +36,7 @@ public class Game implements WindowListener {
     private Arena _arena;
     private PlayerController _player;
     private AIController _main_ai;
-    private List<IController> _controllers;
+    private List<IController> _controllers; 
 
     // FPS syncronization and update
     private long _last_frame_time;
@@ -102,9 +102,15 @@ public class Game implements WindowListener {
         _window_should_close = false;
 
         _arena = new Arena();
-        _player = new PlayerController();
-        _main_ai = new AIController();
         _controllers = new ArrayList<>();
+        Entity playerEntity = EntityFactory.createCharacter(
+        CharacterType.GUARDIAN, "Jogador");
+
+        Entity aiEntity = EntityFactory.createCharacter(
+        CharacterType.HUNTER, "CPU");
+
+        _arena.addCharacter(Arena.TEAM_BLUE, playerEntity);
+        _arena.addCharacter(Arena.TEAM_RED, aiEntity);
 
         _last_frame_time = System.nanoTime();
         _fps_timer = _last_frame_time;
