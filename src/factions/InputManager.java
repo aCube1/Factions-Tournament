@@ -1,171 +1,150 @@
 package factions;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.screen.Screen;
+
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.lang.Character;
 
-import com.googlecode.lanterna.terminal.swing.SwingTerminal;
+public class InputManager {
+    private final Screen _screen;
 
-// Written with help of Github Copilot. It literally just helped debugging
-public class InputManager implements KeyListener {
-    private final SwingTerminal _terminal;
+    private final Set<Character> _keys_down;
+    private final Set<KeyType> _special_keys_down;
 
-    private final Set<Integer> _keys_down;
-    private final Set<Character> _chars_down;
+    private final Set<Character> _previous_keys_down;
+    private final Set<KeyType> _previous_special_keys_down;
 
-    private final Set<Integer> _previous_keys_down;
-    private final Set<Character> _previous_chars_down;
-
-    // Why TF Java does not have a simple Dynamic Queue?
-    private final ConcurrentLinkedQueue<KeyEvent> _key_press_queue;
-    private final ConcurrentLinkedQueue<KeyEvent> _key_release_queue;
-
-    public InputManager(SwingTerminal terminal) {
-        _terminal = terminal;
+    public InputManager(Screen screen) {
+        _screen = screen;
         _keys_down = new HashSet<>();
-        _chars_down = new HashSet<>();
+        _special_keys_down = new HashSet<>();
         _previous_keys_down = new HashSet<>();
-        _previous_chars_down = new HashSet<>();
-        _key_press_queue = new ConcurrentLinkedQueue<>();
-        _key_release_queue = new ConcurrentLinkedQueue<>();
-
-        _terminal.addKeyListener(this);
+        _previous_special_keys_down = new HashSet<>();
     }
 
     public void pollInput() {
-        _previous_keys_down.clear();
-        _previous_keys_down.addAll(_keys_down);
-        _previous_chars_down.clear();
-        _previous_chars_down.addAll(_chars_down);
+        try {
+            _previous_keys_down.clear();
+            _previous_keys_down.addAll(_keys_down);
+            _previous_special_keys_down.clear();
+            _previous_special_keys_down.addAll(_special_keys_down);
 
-        _keys_down.clear();
-        _chars_down.clear();
+            _keys_down.clear();
+            _special_keys_down.clear();
 
-        while (!_key_press_queue.isEmpty()) {
-            KeyEvent event = _key_press_queue.poll();
-            _keys_down.add(event.getKeyCode());
-            if (event.getKeyChar() != KeyEvent.CHAR_UNDEFINED) {
-                _chars_down.add(event.getKeyChar());
+            KeyStroke key_stroke;
+            while ((key_stroke = _screen.pollInput()) != null) {
+                if (key_stroke.getCharacter() != null) {
+                    _keys_down.add(key_stroke.getCharacter());
+                }
+
+                if (key_stroke.getKeyType() != null) {
+                    _special_keys_down.add(key_stroke.getKeyType());
+                }
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        while (!_key_release_queue.isEmpty()) {
-            KeyEvent event = _key_release_queue.poll();
-            _keys_down.remove(event.getKeyCode());
-            if (event.getKeyChar() != KeyEvent.CHAR_UNDEFINED) {
-                _chars_down.remove(event.getKeyChar());
-            }
-        }
-    }
-
-    @Override
-    public void keyPressed(KeyEvent event) {
-        _key_press_queue.offer(event);
-    }
-
-    @Override
-    public void keyReleased(KeyEvent event) {
-        _key_release_queue.offer(event);
-    }
-
-    @Override
-    public void keyTyped(KeyEvent arg0) {
-        // NO!
-    }
-
-    public boolean isKeyDown(int keycode) {
-        return _keys_down.contains(keycode);
     }
 
     public boolean isKeyDown(char key) {
-        return _chars_down.contains(key)
-                || _chars_down.contains(Character.toLowerCase(key))
-                || _chars_down.contains(Character.toUpperCase(key));
+        return _keys_down.contains(key)
+                || _keys_down.contains(Character.toLowerCase(key))
+                || _keys_down.contains(Character.toUpperCase(key));
     }
 
-    public boolean isKeyJustPressed(int keycode) {
-        return _keys_down.contains(keycode) && !_previous_keys_down.contains(keycode);
+    public boolean isKeyDown(KeyType key_type) {
+        return _special_keys_down.contains(key_type);
     }
 
     public boolean isKeyJustPressed(char key) {
-        char low = Character.toLowerCase(key);
-        char up = Character.toUpperCase(key);
-        boolean is_down = _chars_down.contains(key)
-                || _chars_down.contains(low)
-                || _chars_down.contains(up);
-        boolean was_down = _previous_chars_down.contains(key)
-                || _previous_chars_down.contains(key)
-                || _previous_chars_down.contains(key);
+        char lower = Character.toLowerCase(key);
+        char upper = Character.toUpperCase(key);
+
+        boolean is_down = _keys_down.contains(key)
+                || _keys_down.contains(lower)
+                || _keys_down.contains(upper);
+
+        boolean was_down = _previous_keys_down.contains(key)
+                || _previous_keys_down.contains(lower)
+                || _previous_keys_down.contains(upper);
+
         return is_down && !was_down;
     }
 
-    public boolean isKeyJustReleased(int keycode) {
-        return !_keys_down.contains(keycode) && _previous_keys_down.contains(keycode);
+    public boolean isKeyJustPressed(KeyType key_type) {
+        return _special_keys_down.contains(key_type)
+                && !_previous_special_keys_down.contains(key_type);
     }
 
-    public boolean isKeyJustJustReleased(char key) {
-        char low = Character.toLowerCase(key);
-        char up = Character.toUpperCase(key);
-        boolean is_down = _chars_down.contains(key)
-                || _chars_down.contains(low)
-                || _chars_down.contains(up);
-        boolean was_down = _previous_chars_down.contains(key)
-                || _previous_chars_down.contains(key)
-                || _previous_chars_down.contains(key);
+    public boolean isKeyJustReleased(char key) {
+        char lower = Character.toLowerCase(key);
+        char upper = Character.toUpperCase(key);
+
+        boolean is_down = _keys_down.contains(key)
+                || _keys_down.contains(lower)
+                || _keys_down.contains(upper);
+
+        boolean was_down = _previous_keys_down.contains(key)
+                || _previous_keys_down.contains(lower)
+                || _previous_keys_down.contains(upper);
+
         return !is_down && was_down;
     }
 
-    // Helpers
+    public boolean isKeyJustReleased(KeyType key_type) {
+        return !_special_keys_down.contains(key_type)
+                && _previous_special_keys_down.contains(key_type);
+    }
 
     public boolean isUpPressed() {
-        return isKeyDown(KeyEvent.VK_UP) || isKeyDown('w') || isKeyDown('W');
+        return isKeyDown(KeyType.ArrowUp) || isKeyDown('w') || isKeyDown('W');
     }
 
     public boolean isDownPressed() {
-        return isKeyDown(KeyEvent.VK_DOWN) || isKeyDown('s') || isKeyDown('S');
+        return isKeyDown(KeyType.ArrowDown) || isKeyDown('s') || isKeyDown('S');
     }
 
     public boolean isLeftPressed() {
-        return isKeyDown(KeyEvent.VK_LEFT) || isKeyDown('a') || isKeyDown('A');
+        return isKeyDown(KeyType.ArrowLeft) || isKeyDown('a') || isKeyDown('A');
     }
 
     public boolean isRightPressed() {
-        return isKeyDown(KeyEvent.VK_RIGHT) || isKeyDown('d') || isKeyDown('D');
+        return isKeyDown(KeyType.ArrowRight) || isKeyDown('d') || isKeyDown('D');
     }
 
     public boolean isUpJustPressed() {
-        return isKeyJustPressed(KeyEvent.VK_UP) || isKeyJustPressed('w') || isKeyJustPressed('W');
+        return isKeyJustPressed(KeyType.ArrowUp) || isKeyJustPressed('w') || isKeyJustPressed('W');
     }
 
     public boolean isDownJustPressed() {
-        return isKeyJustPressed(KeyEvent.VK_DOWN) || isKeyJustPressed('s') || isKeyJustPressed('S');
+        return isKeyJustPressed(KeyType.ArrowDown) || isKeyJustPressed('s') || isKeyJustPressed('S');
     }
 
     public boolean isLeftJustPressed() {
-        return isKeyJustPressed(KeyEvent.VK_LEFT) || isKeyJustPressed('a') || isKeyJustPressed('A');
+        return isKeyJustPressed(KeyType.ArrowLeft) || isKeyJustPressed('a') || isKeyJustPressed('A');
     }
 
     public boolean isRightJustPressed() {
-        return isKeyJustPressed(KeyEvent.VK_RIGHT) || isKeyJustPressed('d') || isKeyJustPressed('D');
+        return isKeyJustPressed(KeyType.ArrowRight) || isKeyJustPressed('d') || isKeyJustPressed('D');
     }
 
     public boolean isUpJustReleased() {
-        return isKeyJustReleased(KeyEvent.VK_UP) || isKeyJustReleased('w') || isKeyJustReleased('W');
+        return isKeyJustReleased(KeyType.ArrowUp) || isKeyJustReleased('w') || isKeyJustReleased('W');
     }
 
     public boolean isDownJustReleased() {
-        return isKeyJustReleased(KeyEvent.VK_DOWN) || isKeyJustReleased('s') || isKeyJustReleased('S');
+        return isKeyJustReleased(KeyType.ArrowDown) || isKeyJustReleased('s') || isKeyJustReleased('S');
     }
 
     public boolean isLeftJustReleased() {
-        return isKeyJustReleased(KeyEvent.VK_LEFT) || isKeyJustReleased('a') || isKeyJustReleased('A');
+        return isKeyJustReleased(KeyType.ArrowLeft) || isKeyJustReleased('a') || isKeyJustReleased('A');
     }
 
     public boolean isRightJustReleased() {
-        return isKeyJustReleased(KeyEvent.VK_RIGHT) || isKeyJustReleased('d') || isKeyJustReleased('D');
+        return isKeyJustReleased(KeyType.ArrowRight) || isKeyJustReleased('d') || isKeyJustReleased('D');
     }
-
 }
