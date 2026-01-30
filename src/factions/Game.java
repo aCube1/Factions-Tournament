@@ -19,8 +19,10 @@ import com.googlecode.lanterna.terminal.swing.SwingTerminal;
 import factions.controllers.AIController;
 import factions.controllers.PlayerController;
 import factions.EntityFactory;
+import factions.scenes.BattleScene;
 import factions.scenes.CharacterSelectionScene;
 import factions.scenes.MainMenuScene;
+import factions.scenes.RulesScene;
 
 public class Game implements WindowListener {
     public static final int DEFAULT_WIDTH = 960;
@@ -46,6 +48,8 @@ public class Game implements WindowListener {
 
     private Arena _arena;
     private List<IController> _controllers;
+    private PlayerController _player;
+    private AIController _main_ai;
 
     // FPS syncronization and update
     private long _last_frame_time;
@@ -59,14 +63,14 @@ public class Game implements WindowListener {
 
     public static void main(String[] args) throws IOException, InterruptedException {
         LanternaThemes.registerTheme("darkone", SimpleTheme.makeTheme(
-                false,
-                FG_LIGHT,
-                BG_DARK,
-                FG_EDITABLE,
-                BG_EDITABLE,
-                FG_SELECTED,
-                BG_SELECTED,
-                BG_GUI));
+            false,
+            FG_LIGHT,
+            BG_DARK,
+            FG_EDITABLE,
+            BG_EDITABLE,
+            FG_SELECTED,
+            BG_SELECTED,
+            BG_GUI));
 
         Screen screen = null;
 
@@ -109,44 +113,44 @@ public class Game implements WindowListener {
 
             terminal.close();
             frame.dispose();
+
+            // Force exit to ensure all threads are terminated
+            System.exit(0);
         }
     }
 
     private Game(SwingTerminal terminal, Screen screen) {
         _screen = screen;
         _scene_manager = new SceneManager();
+
+        // Initialize arena and entities
+        _arena = new Arena();
+        _controllers = new ArrayList<>();
+
+        // Create player entity and controller
+        Entity playerEntity = EntityFactory.createCharacter(CharacterType.GUARDIAN, "Jogador");
+        _player = new PlayerController(playerEntity);
+        _controllers.add(_player);
+
+        // Create AI entity and controller
+        Entity aiEntity = EntityFactory.createCharacter(CharacterType.HUNTER, "CPU");
+        _main_ai = new AIController(aiEntity);
+        _controllers.add(_main_ai);
+
+        // Add characters to arena teams
+        _arena.addCharacter(Arena.TEAM_BLUE, playerEntity);
+        _arena.addCharacter(Arena.TEAM_RED, aiEntity);
+
+        // Setup scenes
         _scene_manager.addScene("main_menu", new MainMenuScene(screen));
         _scene_manager.addScene("character_select", new CharacterSelectionScene(screen));
+        _scene_manager.addScene("battle", new BattleScene(screen, _arena, _player, _main_ai));
+        _scene_manager.addScene("rules", new RulesScene(screen));
         _scene_manager.switchScene("main_menu");
 
         _window_should_close = false;
 
-        _arena = new Arena();
-        _controllers = new ArrayList<>();
-<<<<<<< HEAD
-
-        Entity player = EntityFactory.createCharacter(CharacterType.GUARDIAN, "Jogador");
-      
-    
-        Entity aiEntity = EntityFactory.createCharacter(CharacterType.HUNTER, "CPU");
-       
-
-        _player = new PlayerController(player);
-        _main_ai = new AIController(aiEntity);
-
-        _controllers.add(_player);
-        _controllers.add(_main_ai);
-=======
-        _controllers.add(new PlayerController());
-        _controllers.add(new AIController());
-        Entity playerEntity = EntityFactory.createCharacter(
-                CharacterType.GUARDIAN, "Jogador");
-
-        Entity aiEntity = EntityFactory.createCharacter(
-                CharacterType.HUNTER, "CPU");
->>>>>>> db380c292526c5661c5d1e7a800f3c49bc6a0798
-
-
+        // Initialize FPS tracking
         _last_frame_time = System.nanoTime();
         _fps_timer = _last_frame_time;
         _frame_count = 0;
@@ -157,26 +161,14 @@ public class Game implements WindowListener {
 
     private void doFrame() throws IOException {
         String current_scene = _scene_manager.getCurrentSceneName();
+
+        // Check if user wants to exit
         if (current_scene != null && current_scene.equals("exit")) {
             _window_should_close = true;
             return;
         }
 
-        for (IController controller : _controllers) {
-            controller.update();
-        }
-
-        Entity playerEntity = EntityFactory.createCharacter(
-        CharacterType.GUARDIAN, "Jogador");
-
-        Entity aiEntity = EntityFactory.createCharacter(
-        CharacterType.HUNTER, "CPU");
-
-        _arena.addCharacter(Arena.TEAM_BLUE, playerEntity);
-        _arena.addCharacter(Arena.TEAM_RED, aiEntity);
-
-        _arena.computeTurn(_controllers);
-
+        // Update scene manager
         _scene_manager.update();
         _scene_manager.render();
         _screen.doResizeIfNecessary();
@@ -244,5 +236,25 @@ public class Game implements WindowListener {
 
     public int getCurrentFPS() {
         return _current_fps;
+    }
+
+    public Arena getArena() {
+        return _arena;
+    }
+
+    public PlayerController getPlayer() {
+        return _player;
+    }
+
+    public AIController getAI() {
+        return _main_ai;
+    }
+
+    public void startBattle() {
+        _scene_manager.switchScene("battle");
+    }
+
+    public void exitGame() {
+        _window_should_close = true;
     }
 }
