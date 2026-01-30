@@ -10,5 +10,5 @@
 ## Contributors
 
 1. (@aCube1) - Anthony Levi
-2. (@ryan7mmartins) -
-3. (@AeternalUmbra) -
+2. (@ryan7mmartins) - Ryan Martins
+3. (@AeternalUmbra) - Levi
