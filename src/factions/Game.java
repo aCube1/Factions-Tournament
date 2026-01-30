@@ -10,6 +10,8 @@ import java.util.List;
 import javax.swing.JFrame;
 
 import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.bundle.LanternaThemes;
+import com.googlecode.lanterna.graphics.SimpleTheme;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
@@ -19,6 +21,7 @@ import com.googlecode.lanterna.terminal.swing.SwingTerminal;
 
 import factions.controllers.AIController;
 import factions.controllers.PlayerController;
+import factions.scenes.CharacterSelectionScene;
 import factions.scenes.MainMenuScene;
 
 public class Game implements WindowListener {
@@ -26,6 +29,16 @@ public class Game implements WindowListener {
     public static final int DEFAULT_HEIGHT = 540;
     public static final int TARGET_FPS = 30;
     public static final long TARGET_FRAMETIME = 1_000_000_000L / TARGET_FPS; // NS per frame
+
+    private static final TextColor BG_DARK = new TextColor.RGB(15, 15, 20);
+    private static final TextColor BG_GUI = new TextColor.RGB(20, 20, 25);
+
+    private static final TextColor FG_LIGHT = new TextColor.RGB(220, 220, 230);
+    private static final TextColor FG_EDITABLE = new TextColor.RGB(200, 200, 210);
+    private static final TextColor FG_SELECTED = new TextColor.RGB(15, 15, 20);
+
+    private static final TextColor BG_EDITABLE = new TextColor.RGB(25, 25, 35);
+    private static final TextColor BG_SELECTED = new TextColor.RGB(255, 200, 50);
 
     private static Game _intance;
 
@@ -49,6 +62,16 @@ public class Game implements WindowListener {
     }
 
     public static void main(String[] args) throws IOException, InterruptedException {
+        LanternaThemes.registerTheme("darkone", SimpleTheme.makeTheme(
+                false,
+                FG_LIGHT,
+                BG_DARK,
+                FG_EDITABLE,
+                BG_EDITABLE,
+                FG_SELECTED,
+                BG_SELECTED,
+                BG_GUI));
+
         Screen screen = null;
 
         Font font = new Font("Monospaced", Font.PLAIN, 12);
@@ -97,6 +120,7 @@ public class Game implements WindowListener {
         _screen = screen;
         _scene_manager = new SceneManager();
         _scene_manager.addScene("main_menu", new MainMenuScene(screen));
+        _scene_manager.addScene("character_select", new CharacterSelectionScene(screen));
         _scene_manager.switchScene("main_menu");
 
         _window_should_close = false;
@@ -134,6 +158,7 @@ public class Game implements WindowListener {
 
         _scene_manager.update();
         _scene_manager.render();
+        _screen.doResizeIfNecessary();
     }
 
     private void syncFPS() {
