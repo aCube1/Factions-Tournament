@@ -3,9 +3,7 @@ package factions;
 import factions.controllers.*;
 
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.IOException;
@@ -14,23 +12,13 @@ import java.util.List;
 
 import javax.swing.JFrame;
 
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
-import com.googlecode.lanterna.screen.VirtualScreen;
-import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
-import com.googlecode.lanterna.terminal.Terminal;
-import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
 import com.googlecode.lanterna.terminal.swing.SwingTerminal;
-import com.googlecode.lanterna.terminal.swing.SwingTerminalFontConfiguration;
-import com.googlecode.lanterna.terminal.swing.TerminalEmulatorAutoCloseTrigger;
-import com.googlecode.lanterna.terminal.swing.TerminalEmulatorColorConfiguration;
-import com.googlecode.lanterna.terminal.swing.TerminalEmulatorDeviceConfiguration;
 
 public class Game implements WindowListener {
     static final int DEFAULT_WIDTH = 800;
@@ -103,19 +91,12 @@ public class Game implements WindowListener {
         _arena = new Arena();
         _player = new PlayerController();
         _main_ai = new AIController();
+        _controllers = new ArrayList<>();
 
         _last_frame_time = System.nanoTime();
         _fps_timer = _last_frame_time;
         _frame_count = 0;
         _current_fps = 0;
-
-
-        _arena = new Arena();
-        _player = new PlayerController(); //instaciando o player e ia
-        _main_ai = new AIController();
-        _controllers = new ArrayList<>();
-        _controllers.add(_main_ai);
-        _controllers.add(_player);
 
         _color = TextColor.ANSI.BLUE;
     }
@@ -180,33 +161,33 @@ public class Game implements WindowListener {
             _fps_timer = current_time;
         }
     }
+
     private CharacterType askCharacterType(Screen screen) throws IOException {
-    TextGraphics gfx = screen.newTextGraphics();
+        TextGraphics gfx = screen.newTextGraphics();
 
-    while (true) {
-        screen.clear();
+        while (true) {
+            screen.clear();
 
-        gfx.putString(0, 2, "Escolha seu personagem:");
-        gfx.putString(0, 4, "1 - Guardião");
-        gfx.putString(0, 5, "2 - Mago");
-        gfx.putString(0, 6, "3 - Caçador");
-        gfx.putString(0, 8, "Digite sua escolha:");
+            gfx.putString(0, 2, "Escolha seu personagem:");
+            gfx.putString(0, 4, "1 - Guardião");
+            gfx.putString(0, 5, "2 - Mago");
+            gfx.putString(0, 6, "3 - Caçador");
+            gfx.putString(0, 8, "Digite sua escolha:");
 
-        screen.refresh();
+            screen.refresh();
 
-        KeyStroke key = screen.readInput();
+            KeyStroke key = screen.readInput();
 
-        if (key.getKeyType() == KeyType.Character) {
-            CharacterType type = CharacterType.fromString(
-                String.valueOf(key.getCharacter())
-            );
+            if (key.getKeyType() == KeyType.Character) {
+                CharacterType type = CharacterType.fromString(
+                        String.valueOf(key.getCharacter()));
 
-            if (type != null) {
-                return type;
+                if (type != null) {
+                    return type;
+                }
             }
         }
     }
-}
 
     @Override
     public void windowActivated(WindowEvent e) {
