@@ -8,17 +8,17 @@ import factions.Entity;
 import factions.IController;
 
 public class PlayerController implements IController {
-    private Entity player;
     private ArrayList<Action> _actions;
+    private Entity _entity;
 
-    public PlayerController(Entity player) {
-        this.player = player;
+    public PlayerController(Entity entity) {
+        this._entity = entity;
         this._actions = new ArrayList<>();
     }
 
     @Override
     public void update() {
-        
+
     }
 
     @Override

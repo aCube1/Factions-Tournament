@@ -9,10 +9,10 @@ import factions.Entity;
 
 public class AIController implements IController {
     private ArrayList<Action> _actions;
-    private Entity aiEntity;
+    private Entity _entity;
 
-    public AIController(Entity aiEntity) {
-        this.aiEntity = aiEntity;
+    public AIController(Entity entity) {
+        this._entity = entity;
         _actions = new ArrayList<Action>();
     }
 

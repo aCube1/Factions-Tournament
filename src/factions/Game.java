@@ -123,29 +123,12 @@ public class Game implements WindowListener {
 
         _arena = new Arena();
         _controllers = new ArrayList<>();
-<<<<<<< HEAD
 
         Entity player = EntityFactory.createCharacter(CharacterType.GUARDIAN, "Jogador");
-      
-    
-        Entity aiEntity = EntityFactory.createCharacter(CharacterType.HUNTER, "CPU");
-       
+        Entity main_ai = EntityFactory.createCharacter(CharacterType.HUNTER, "CPU");
 
-        _player = new PlayerController(player);
-        _main_ai = new AIController(aiEntity);
-
-        _controllers.add(_player);
-        _controllers.add(_main_ai);
-=======
-        _controllers.add(new PlayerController());
-        _controllers.add(new AIController());
-        Entity playerEntity = EntityFactory.createCharacter(
-                CharacterType.GUARDIAN, "Jogador");
-
-        Entity aiEntity = EntityFactory.createCharacter(
-                CharacterType.HUNTER, "CPU");
->>>>>>> db380c292526c5661c5d1e7a800f3c49bc6a0798
-
+        _controllers.add(new PlayerController(player));
+        _controllers.add(new AIController(main_ai));
 
         _last_frame_time = System.nanoTime();
         _fps_timer = _last_frame_time;
@@ -167,10 +150,10 @@ public class Game implements WindowListener {
         }
 
         Entity playerEntity = EntityFactory.createCharacter(
-        CharacterType.GUARDIAN, "Jogador");
+                CharacterType.GUARDIAN, "Jogador");
 
         Entity aiEntity = EntityFactory.createCharacter(
-        CharacterType.HUNTER, "CPU");
+                CharacterType.HUNTER, "CPU");
 
         _arena.addCharacter(Arena.TEAM_BLUE, playerEntity);
         _arena.addCharacter(Arena.TEAM_RED, aiEntity);

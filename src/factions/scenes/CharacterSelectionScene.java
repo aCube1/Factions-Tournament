@@ -164,11 +164,13 @@ public class CharacterSelectionScene implements IScene {
                 updatePreviewPanel(char_index);
                 updateSelector(char_index);
 
+                // Force focus request for new buttons
                 if (_character_buttons[char_index] != null) {
                     _character_buttons[char_index].takeFocus();
                 }
             });
 
+            // Store out buttons for workaround
             _character_buttons[char_index] = char_button;
 
             Panel wrapper = new Panel();
