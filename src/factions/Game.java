@@ -21,6 +21,7 @@ import com.googlecode.lanterna.terminal.swing.SwingTerminal;
 
 import factions.controllers.AIController;
 import factions.controllers.PlayerController;
+import factions.EntityFactory;
 import factions.scenes.CharacterSelectionScene;
 import factions.scenes.MainMenuScene;
 
@@ -127,14 +128,19 @@ public class Game implements WindowListener {
 
         _arena = new Arena();
         _controllers = new ArrayList<>();
-        Entity playerEntity = EntityFactory.createCharacter(
-        CharacterType.GUARDIAN, "Jogador");
 
-        Entity aiEntity = EntityFactory.createCharacter(
-        CharacterType.HUNTER, "CPU");
+        Entity player = EntityFactory.createCharacter(CharacterType.GUARDIAN, "Jogador");
+      
+    
+        Entity aiEntity = EntityFactory.createCharacter(CharacterType.HUNTER, "CPU");
+       
 
-        _arena.addCharacter(Arena.TEAM_BLUE, playerEntity);
-        _arena.addCharacter(Arena.TEAM_RED, aiEntity);
+        _player = new PlayerController(player);
+        _main_ai = new AIController(aiEntity);
+
+        _controllers.add(_player);
+        _controllers.add(_main_ai);
+
 
         _last_frame_time = System.nanoTime();
         _fps_timer = _last_frame_time;
@@ -153,6 +159,15 @@ public class Game implements WindowListener {
 
         _player.update();
         _main_ai.update();
+
+        Entity playerEntity = EntityFactory.createCharacter(
+        CharacterType.GUARDIAN, "Jogador");
+
+        Entity aiEntity = EntityFactory.createCharacter(
+        CharacterType.HUNTER, "CPU");
+
+        _arena.addCharacter(Arena.TEAM_BLUE, playerEntity);
+        _arena.addCharacter(Arena.TEAM_RED, aiEntity);
 
         _arena.computeTurn(_controllers);
 

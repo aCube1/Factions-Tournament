@@ -5,11 +5,14 @@ import java.util.ArrayList;
 import factions.Action;
 import factions.Arena;
 import factions.IController;
+import factions.Entity;
 
 public class AIController implements IController {
-    ArrayList<Action> _actions;
+    private ArrayList<Action> _actions;
+    private Entity aiEntity;
 
-    public AIController() {
+    public AIController(Entity aiEntity) {
+        this.aiEntity = aiEntity;
         _actions = new ArrayList<Action>();
     }
 

@@ -4,13 +4,16 @@ import java.util.ArrayList;
 
 import factions.Action;
 import factions.Arena;
+import factions.Entity;
 import factions.IController;
 
 public class PlayerController implements IController {
-    ArrayList<Action> _actions;
+    private Entity player;
+    private ArrayList<Action> _actions;
 
-    public PlayerController() {
-        _actions = new ArrayList<>();
+    public PlayerController(Entity player) {
+        this.player = player;
+        this._actions = new ArrayList<>();
     }
 
     @Override
