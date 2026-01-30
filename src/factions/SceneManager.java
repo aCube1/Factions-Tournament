@@ -10,6 +10,7 @@ public class SceneManager {
     private Map<String, IScene> _scenes;
     private IScene _current;
     private String _current_state;
+    private String _previous_state;
     private String _next_state;
     private boolean _is_next_state_transition;
 
@@ -18,6 +19,7 @@ public class SceneManager {
         _current = null;
         _current_state = null;
         _next_state = null;
+        _previous_state = null;
         _is_next_state_transition = false;
     }
 
@@ -49,6 +51,7 @@ public class SceneManager {
             if (_current != null)
                 _current.onExit();
 
+            _previous_state = _current_state;
             _current_state = _next_state;
             if (!_is_next_state_transition) {
                 _current = _scenes.get(_next_state);
@@ -74,6 +77,13 @@ public class SceneManager {
 
     public String getCurrentSceneName() {
         return _current_state;
+    }
+
+    public IScene getPreviousState() {
+        if (_previous_state == null)
+            return null;
+
+        return _scenes.get(_previous_state);
     }
 
     public String getNextSceneName() {

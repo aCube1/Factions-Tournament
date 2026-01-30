@@ -12,9 +12,6 @@ import javax.swing.JFrame;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.bundle.LanternaThemes;
 import com.googlecode.lanterna.graphics.SimpleTheme;
-import com.googlecode.lanterna.graphics.TextGraphics;
-import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.swing.SwingTerminal;
@@ -47,9 +44,7 @@ public class Game implements WindowListener {
     private boolean _window_should_close;
 
     private Arena _arena;
-    private PlayerController _player;
-    private AIController _main_ai;
-    private List<IController> _controllers; 
+    private List<IController> _controllers;
 
     // FPS syncronization and update
     private long _last_frame_time;
@@ -127,11 +122,13 @@ public class Game implements WindowListener {
 
         _arena = new Arena();
         _controllers = new ArrayList<>();
+        _controllers.add(new PlayerController());
+        _controllers.add(new AIController());
         Entity playerEntity = EntityFactory.createCharacter(
-        CharacterType.GUARDIAN, "Jogador");
+                CharacterType.GUARDIAN, "Jogador");
 
         Entity aiEntity = EntityFactory.createCharacter(
-        CharacterType.HUNTER, "CPU");
+                CharacterType.HUNTER, "CPU");
 
         _arena.addCharacter(Arena.TEAM_BLUE, playerEntity);
         _arena.addCharacter(Arena.TEAM_RED, aiEntity);
@@ -151,8 +148,9 @@ public class Game implements WindowListener {
             return;
         }
 
-        _player.update();
-        _main_ai.update();
+        for (IController controller : _controllers) {
+            controller.update();
+        }
 
         _arena.computeTurn(_controllers);
 
@@ -189,33 +187,6 @@ public class Game implements WindowListener {
             _current_fps = (int) _frame_count;
             _frame_count = 0;
             _fps_timer = current_time;
-        }
-    }
-
-    private CharacterType askCharacterType(Screen screen) throws IOException {
-        TextGraphics gfx = screen.newTextGraphics();
-
-        while (true) {
-            screen.clear();
-
-            gfx.putString(0, 2, "Escolha seu personagem:");
-            gfx.putString(0, 4, "1 - Guardião");
-            gfx.putString(0, 5, "2 - Mago");
-            gfx.putString(0, 6, "3 - Caçador");
-            gfx.putString(0, 8, "Digite sua escolha:");
-
-            screen.refresh();
-
-            KeyStroke key = screen.readInput();
-
-            if (key.getKeyType() == KeyType.Character) {
-                CharacterType type = CharacterType.fromString(
-                        String.valueOf(key.getCharacter()));
-
-                if (type != null) {
-                    return type;
-                }
-            }
         }
     }
 
