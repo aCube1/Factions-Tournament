@@ -15,22 +15,23 @@ import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.LinearLayout;
 import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
 import com.googlecode.lanterna.gui2.Panel;
-import com.googlecode.lanterna.gui2.SameTextGUIThread;
 import com.googlecode.lanterna.gui2.Separator;
 import com.googlecode.lanterna.gui2.Window;
 import com.googlecode.lanterna.screen.Screen;
 
+import factions.Game;
 import factions.IScene;
+import factions.SceneManager;
 
 public class MainMenuScene implements IScene {
+    private SceneManager _manager;
     private Screen _screen;
     private MultiWindowTextGUI _gui;
     private BasicWindow _window;
-    private String _next_scene;
+    private Label _fps_label;
 
     public MainMenuScene(Screen screen) {
         _screen = screen;
-        _next_scene = null;
     }
 
     private Panel createMenu() {
@@ -51,12 +52,12 @@ public class MainMenuScene implements IScene {
 
         // Buttons
         Button start_button = new Button("▶ Start Game", () -> {
-            _next_scene = "character_select";
+            _manager.switchScene("character_select");
         });
         start_button.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
 
         Button exit_button = new Button(" Exit", () -> {
-            _next_scene = "exit";
+            _manager.switchScene("exit", true);
         });
         exit_button.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
 
@@ -72,22 +73,23 @@ public class MainMenuScene implements IScene {
         Panel footer = new Panel();
         footer.setLayoutManager(new LinearLayout(Direction.VERTICAL));
 
-        Separator separator = new Separator(Direction.HORIZONTAL);
-        footer.addComponent(separator);
+        footer.addComponent(new Separator(Direction.HORIZONTAL));
 
         Panel footer_content = new Panel();
         footer_content.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
 
-        Label controls = new Label("Controls: ↑↓ Navigate | ENTER Select | ESC Back");
+        Label controls = new Label("Controls: ↑↓ Navigate | ENTER Select | TAB Switch");
         controls.setForegroundColor(new TextColor.RGB(150, 150, 150));
-
         footer_content.addComponent(controls);
+
         footer_content.addComponent(new EmptySpace(new TerminalSize(5, 1)));
 
-        Label version = new Label("v1.0");
-        version.setForegroundColor(new TextColor.RGB(100, 100, 100));
+        _fps_label = new Label("FPS: 0");
+        _fps_label.setForegroundColor(new TextColor.RGB(100, 100, 100));
+        footer_content.addComponent(_fps_label);
 
-        footer_content.addComponent(version);
+        footer_content.addComponent(new EmptySpace(new TerminalSize(3, 1)));
+
         footer.addComponent(footer_content);
 
         return footer;
@@ -95,25 +97,36 @@ public class MainMenuScene implements IScene {
 
     @Override
     public void update() {
+        if (_fps_label != null) {
+            _fps_label.setText("FPS: " + Game.getInstance().getCurrentFPS());
+        }
+
+        try {
+            _gui.processInput();
+
+            // Reset state if window is closed
+            if (!_window.isVisible() || _gui.getWindows().isEmpty()) {
+                if (_manager.getNextSceneName() == null)
+                    _manager.switchScene("main_menu");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void render() throws IOException {
-        _screen.clear();
         _gui.updateScreen();
-        _screen.refresh();
+        _screen.refresh(Screen.RefreshType.DELTA);
     }
 
     @Override
     public void onEnter() {
-        _next_scene = null;
-
-        _gui = new MultiWindowTextGUI(new SameTextGUIThread.Factory(), _screen);
+        _gui = new MultiWindowTextGUI(_screen);
         _gui.setTheme(LanternaThemes.getRegisteredTheme("blaster"));
 
         _window = new BasicWindow();
-        _window.setHints(Arrays.asList(
-                Window.Hint.FULL_SCREEN, Window.Hint.MODAL));
+        _window.setHints(Arrays.asList(Window.Hint.FULL_SCREEN, Window.Hint.MODAL));
 
         Panel container = new Panel();
         container.setLayoutManager(new BorderLayout());
@@ -132,7 +145,7 @@ public class MainMenuScene implements IScene {
     }
 
     @Override
-    public String getNextScene() {
-        return _next_scene;
+    public void setSceneManager(SceneManager manager) {
+        _manager = manager;
     }
 }

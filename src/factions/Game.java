@@ -27,8 +27,9 @@ public class Game implements WindowListener {
     public static final int TARGET_FPS = 30;
     public static final long TARGET_FRAMETIME = 1_000_000_000L / TARGET_FPS; // NS per frame
 
+    private static Game _intance;
+
     private final Screen _screen;
-    private final InputManager _input;
     private final SceneManager _scene_manager;
     private boolean _window_should_close;
 
@@ -42,6 +43,10 @@ public class Game implements WindowListener {
     private long _fps_timer;
     private long _frame_count;
     private int _current_fps;
+
+    public static Game getInstance() {
+        return _intance;
+    }
 
     public static void main(String[] args) throws IOException, InterruptedException {
         Screen screen = null;
@@ -60,7 +65,8 @@ public class Game implements WindowListener {
         frame.setLocationRelativeTo(null); // Center terminal on screen
         frame.setVisible(true);
         frame.setFocusable(true);
-        frame.requestFocusInWindow();
+
+        terminal.requestFocusInWindow();
 
         try {
             screen = new TerminalScreen(terminal);
@@ -89,9 +95,9 @@ public class Game implements WindowListener {
 
     private Game(SwingTerminal terminal, Screen screen) {
         _screen = screen;
-        _input = new InputManager(screen);
         _scene_manager = new SceneManager();
         _scene_manager.addScene("main_menu", new MainMenuScene(screen));
+        _scene_manager.switchScene("main_menu");
 
         _window_should_close = false;
 
@@ -104,24 +110,24 @@ public class Game implements WindowListener {
         _fps_timer = _last_frame_time;
         _frame_count = 0;
         _current_fps = 0;
+
+        _intance = this;
     }
 
     private void doFrame() throws IOException {
+        String current_scene = _scene_manager.getCurrentSceneName();
+        if (current_scene != null && current_scene.equals("exit")) {
+            _window_should_close = true;
+            return;
+        }
+
         _player.update();
         _main_ai.update();
 
         _arena.computeTurn(_controllers);
 
-        _input.pollInput();
         _scene_manager.update();
         _scene_manager.render();
-
-        boolean should_exit = _input.isKeyJustPressed(KeyType.Escape);
-        should_exit = should_exit || (_scene_manager.getCurrentScene() != null
-                && _scene_manager.getCurrentSceneName().equals("exit"));
-        if (should_exit) {
-            _window_should_close = true;
-        }
     }
 
     private void syncFPS() {

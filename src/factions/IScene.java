@@ -2,8 +2,6 @@ package factions;
 
 import java.io.IOException;
 
-import com.googlecode.lanterna.screen.Screen;
-
 // I lov ma StateMachine: https://github.com/aCube1/StateMachine
 public interface IScene {
     void update();
@@ -14,5 +12,5 @@ public interface IScene {
 
     void onExit();
 
-    String getNextScene();
+    void setSceneManager(SceneManager manager);
 }
