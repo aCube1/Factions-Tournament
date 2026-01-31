@@ -9,10 +9,11 @@
 7. Estrutura de pastas- Comparação entre estrutura atual e estrutura sugerida.- Validação da organização por pacotes.
 8. Implementação prática- Criação da primeira Action (AttackAction).- Definição dos próximos passos após a implementação.
 9. Ajustes finais- Refatoração apenas de IController e Arena.- Manutenção dos Controllers para implementação futura.
-10. Justificativa técnica- Explicação detalhada do propósito das mudanças no código.
-11. Versionamento- Listagem do que foi implementado para commit organizado.
-12. Debug this code, just tell me what might be wrong. DO NOT CHANGE ANYTHING!
-13. Generate a Lanterna code to draw <Insert UI Element Here>.
-
-> Observação Final
-> Este documento resume os prompts técnicos que guiaram a evolução arquitetural do projeto, com foco em um modelo baseado em Actions e alinhado ao CRC.
+10. Versionamento- Listagem do que foi implementado para commit organizado.
+11. Debug this code, just tell me what might be wrong. DO NOT CHANGE ANYTHING!
+12. Generate a Lanterna code to draw <Insert UI Element Here>.
+13. Desenvolvimento do Sistema de Batalha
+    Preciso de ajuda para finalizar o código do projeto. A maior parte já está pronta, mas ainda falta implementar a parte da batalha.
+    O que preciso:
+    Criar o código do sistema de batalha usando como base o código que já tenho desenvolvido. Você pode criar novas classes se achar necessário para facilitar o trabalho, mas peço que mantenha a estrutura que já existe sem alterações.
+    Resultado esperado: O módulo de batalha funcionando e integrado com o restante do sistema.
