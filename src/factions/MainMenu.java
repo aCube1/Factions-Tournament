@@ -18,26 +18,27 @@ public class MainMenu implements IScene {
         this.layout = new Layout();
         this.rules = new Rules();
     }
+
     @Override
-    public void update(){
+    public void update() {
         try {
-        KeyStroke key = screen.pollInput();
+            KeyStroke key = screen.pollInput();
 
-        if (key == null)
-            return;
+            if (key == null)
+                return;
 
-        if (key.getKeyType() == KeyType.Character) {
-            char c = key.getCharacter();
+            if (key.getKeyType() == KeyType.Character) {
+                char c = key.getCharacter();
 
-            if (c == '1') {
-                manager.switchScene("game");
-            } else if (c == '2') {
-                manager.switchScene("exit");
+                if (c == '1') {
+                    manager.switchScene("game");
+                } else if (c == '2') {
+                    manager.switchScene("exit", true);
+                }
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
     }
 
     @Override
@@ -51,14 +52,14 @@ public class MainMenu implements IScene {
 
         screen.refresh();
     }
-    
+
     @Override
     public void onEnter() {
         System.out.println("Conectando ao Mundo Mágico...");
     }
 
     @Override
-    public void onExit()  {
+    public void onExit() {
         System.out.println("Saindo do jogo...");
     }
 
@@ -67,4 +68,3 @@ public class MainMenu implements IScene {
         this.manager = manager;
     }
 }
-

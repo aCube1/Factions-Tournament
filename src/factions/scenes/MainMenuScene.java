@@ -21,10 +21,10 @@ public class MainMenuScene implements IScene {
 
     private int _selected_option;
     private static final String[] MENU_OPTIONS = {
-        "Iniciar Batalha",
-        "Selecao de Personagens",
-        "Regras",
-        "Sair"
+            "Iniciar Batalha",
+            "Selecao de Personagens",
+            "Regras",
+            "Sair"
     };
 
     public MainMenuScene(Screen screen) {
@@ -82,7 +82,7 @@ public class MainMenuScene implements IScene {
                 _scene_manager.switchScene("rules");
                 break;
             case 3: // Sair
-                _scene_manager.switchScene("exit");
+                _scene_manager.switchScene("exit", true);
                 break;
         }
     }
@@ -120,7 +120,8 @@ public class MainMenuScene implements IScene {
         }
 
         // Draw controls
-        drawCenteredText(graphics, size.getRows() - 2, "Use as setas para navegar, ENTER para selecionar", TextColor.ANSI.GREEN);
+        drawCenteredText(graphics, size.getRows() - 2, "Use as setas para navegar, ENTER para selecionar",
+                TextColor.ANSI.GREEN);
 
         _screen.refresh();
     }

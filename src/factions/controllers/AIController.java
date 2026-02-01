@@ -12,7 +12,6 @@ import factions.actions.AttackAction;
 
 public class AIController implements IController {
     private ArrayList<Action> _actions;
-<<<<<<< HEAD
     private Entity _controlled_entity;
     private Random _random;
 
@@ -24,13 +23,6 @@ public class AIController implements IController {
 
     public Entity getEntity() {
         return _controlled_entity;
-=======
-    private Entity _entity;
-
-    public AIController(Entity entity) {
-        this._entity = entity;
-        _actions = new ArrayList<Action>();
->>>>>>> 532c9b8546609e488baf8011ef8fd0395342981b
     }
 
     @Override

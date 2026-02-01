@@ -32,13 +32,6 @@ public class PlayerController implements IController {
         if (action != null) {
             _actions.add(action);
         }
-
-    private Entity _entity;
-
-    public PlayerController(Entity entity) {
-        this._entity = entity;
-        this._actions = new ArrayList<>();
-
     }
 
     @Override
@@ -52,5 +45,4 @@ public class PlayerController implements IController {
         _actions.clear();
         return actions;
     }
-}
 }
