@@ -150,7 +150,15 @@ public class Game implements WindowListener {
 
         _window_should_close = false;
 
-        // Initialize FPS tracking
+        _arena = new Arena();
+        _controllers = new ArrayList<>();
+
+        Entity player = EntityFactory.createCharacter(CharacterType.GUARDIAN, "Jogador");
+        Entity main_ai = EntityFactory.createCharacter(CharacterType.HUNTER, "CPU");
+
+        _controllers.add(new PlayerController(player));
+        _controllers.add(new AIController(main_ai));
+
         _last_frame_time = System.nanoTime();
         _fps_timer = _last_frame_time;
         _frame_count = 0;
@@ -168,7 +176,21 @@ public class Game implements WindowListener {
             return;
         }
 
-        // Update scene manager
+        for (IController controller : _controllers) {
+            controller.update();
+        }
+
+        Entity playerEntity = EntityFactory.createCharacter(
+                CharacterType.GUARDIAN, "Jogador");
+
+        Entity aiEntity = EntityFactory.createCharacter(
+                CharacterType.HUNTER, "CPU");
+
+        _arena.addCharacter(Arena.TEAM_BLUE, playerEntity);
+        _arena.addCharacter(Arena.TEAM_RED, aiEntity);
+
+        _arena.computeTurn(_controllers);
+
         _scene_manager.update();
         _scene_manager.render();
         _screen.doResizeIfNecessary();
